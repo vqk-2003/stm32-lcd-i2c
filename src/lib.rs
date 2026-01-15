@@ -115,7 +115,12 @@ impl<'a> LCD<'a> {
         }
     }
 
-    pub async fn write(&mut self, data: u8, mode: u8) {
+    pub async fn back_light_on(&mut self, flag: bool) {
+        self.back_light = flag.into();
+        self.write(0, CMD_MODE).await;
+    }
+
+    async fn write(&mut self, data: u8, mode: u8) {
         let high_bits = (mode << RS) | (self.back_light << BL) | (data & 0xF0);
         self.enable_pulse(high_bits).await;
 
