@@ -37,9 +37,10 @@ impl<'a> LCD<'a> {
         lcd.enable_pulse(0x3 << 4).await;
         Timer::after_millis(5).await;
         lcd.enable_pulse(0x3 << 4).await;
-        Timer::after_micros(5).await;
+        Timer::after_micros(100).await;
         lcd.enable_pulse(0x3 << 4).await;
         lcd.enable_pulse(0x2 << 4).await;
+
         lcd.function_set().await;
         lcd.clear_display().await;
         lcd.display_control().await;
