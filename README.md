@@ -1,4 +1,6 @@
-# An async STM32 LCD I2C library using Embassy framework
+# An async LCD I2C library using embedded-hal-async traits
+
+NOTE: This library was first written to rely only Embassy framework but since then it has been migrated to use embedded-hal-async traits, allowing it to be used by more async frameworks.
 
 ## Usage
 ```rust
@@ -24,7 +26,7 @@ bind_interrupts!(struct Irqs {
 async fn main(_spawner: Spawner) {
     let p = embassy_stm32::init(Default::default());
 
-    let i2c = I2c::new(
+    let mut bus = I2c::new(
         p.I2C1,
         p.PB6,
         p.PB7,
@@ -34,11 +36,17 @@ async fn main(_spawner: Spawner) {
         Default::default(),
     );
 
-    let mut lcd = stm32_lcd_i2c::LCD::init(i2c, ADRESS).await;
-    lcd.blink_on(false).await;
-    lcd.cursor_on(false).await;
-    lcd.set_cursor(1, 2).await;
-    lcd.print("hello world").await;
+    let mut delay = embassy_time::Delay;
+
+    let mut lcd = stm32_lcd_i2c::LCD::init(ADRESS, &mut bus, &mut delay)
+        .await
+        .unwrap();
+    lcd.blink_on(false, &mut bus, &mut delay).await.unwrap();
+    lcd.cursor_on(false, &mut bus, &mut delay).await.unwrap();
+    lcd.set_cursor(1, 2, &mut bus, &mut delay).await.unwrap();
+    lcd.print("hello khanh", &mut bus, &mut delay)
+        .await
+        .unwrap();
 
     loop {}
 }
