@@ -26,7 +26,7 @@ bind_interrupts!(struct Irqs {
 async fn main(_spawner: Spawner) {
     let p = embassy_stm32::init(Default::default());
 
-    let mut bus = I2c::new(
+    let bus = I2c::new(
         p.I2C1,
         p.PB6,
         p.PB7,
@@ -38,14 +38,12 @@ async fn main(_spawner: Spawner) {
 
     let mut delay = embassy_time::Delay;
 
-    let mut lcd = stm32_lcd_i2c::LCD::new(bus, ADRESS)
+    let mut lcd = stm32_lcd_i2c::LCD::new(bus, ADRESS);
     lcd.init(&mut delay).await.unwrap();
     lcd.blink_on(false, &mut delay).await.unwrap();
     lcd.cursor_on(false, &mut delay).await.unwrap();
     lcd.set_cursor(1, 2, &mut delay).await.unwrap();
-    lcd.print("hello khanh", &mut delay)
-        .await
-        .unwrap();
+    lcd.print("hello khanh", &mut delay).await.unwrap();
 
     loop {}
 }
