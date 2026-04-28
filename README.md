@@ -38,8 +38,8 @@ async fn main(_spawner: Spawner) {
 
     let delay = embassy_time::Delay;
 
-    let mut lcd = stm32_lcd_i2c::LCD::new(bus, ADRESS, delay);
-    lcd.init(&mut delay).await.unwrap();
+    let mut lcd = stm32_lcd_i2c::LCD::new(bus, ADRESS, delay.clone());
+    lcd.init().await.unwrap();
     lcd.blink_on(false).await.unwrap();
     lcd.cursor_on(false).await.unwrap();
     lcd.set_cursor(1, 2).await.unwrap();
